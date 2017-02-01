@@ -13,9 +13,17 @@ var Countries = function(){
 Countries.prototype = {
 makeRequest: function(url, callback){
   var request = new XMLHttpRequest();
-  request.open('GET', url);
+  request.open("GET", url);
   request.onload = callback;
   request.send();
+},
+
+makePostRequest: function(url, data, callback){
+  var request = new XMLHttpRequest();
+  request.open("POST", url);
+  request.setRequestHeader("Content-type", "application/json");
+  request.onload = callback;
+  request.send(data);
 },
 
 populateList: function(countries){

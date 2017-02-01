@@ -63,24 +63,53 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 244);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ 134:
 /***/ (function(module, exports, __webpack_require__) {
 
-var Countries = __webpack_require__(1);
+var Countries = __webpack_require__(135);
+var selectedCountry;
 
 var UI = function(){
-  var countries = new Countries();
+  this.countries = new Countries();
 
+  this.getSelectedCountry();
+
+  // var addButton = document.querySelector('#add-my-country');
+  // addButton.onclick = addSelectedCountry;
 };
+
+UI.prototype = {
+
+  getSelectedCountry: function(){
+    var countryList = document.querySelector('#country-list');
+    console.log(countryList);
+    var self = this;
+    countryList.onchange = function(event){
+      console.log(this);
+      selectedCountry = {
+        name: this.value //this is undefined...
+      }
+      console.log(selectedCountry);
+      var jsonString = JSON.stringify(selectedCountry);
+
+      self.countries.makePostRequest("/", jsonString, function(){
+        console.log(this.responseText);
+      })
+    };
+  }
+
+ }
 
 module.exports = UI;
 
 /***/ }),
-/* 1 */
+
+/***/ 135:
 /***/ (function(module, exports) {
 
 var Countries = function(){
@@ -98,9 +127,17 @@ var Countries = function(){
 Countries.prototype = {
 makeRequest: function(url, callback){
   var request = new XMLHttpRequest();
-  request.open('GET', url);
+  request.open("GET", url);
   request.onload = callback;
   request.send();
+},
+
+makePostRequest: function(url, data, callback){
+  var request = new XMLHttpRequest();
+  request.open("POST", url);
+  request.setRequestHeader("Content-type", "application/json");
+  request.onload = callback;
+  request.send(data);
 },
 
 populateList: function(countries){
@@ -118,10 +155,11 @@ populateList: function(countries){
 module.exports = Countries;
 
 /***/ }),
-/* 2 */
+
+/***/ 244:
 /***/ (function(module, exports, __webpack_require__) {
 
-var UI = __webpack_require__(0);
+var UI = __webpack_require__(134);
 
 var app = function() {
   new UI();
@@ -131,5 +169,6 @@ window.onload = app;
 
 
 /***/ })
-/******/ ]);
+
+/******/ });
 //# sourceMappingURL=bundle.js.map

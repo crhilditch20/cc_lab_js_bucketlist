@@ -1,7 +1,6 @@
 var Countries = function(){
   var url = 'https://restcountries.eu/rest/v1/all';
   var self = this;
-  console.log(this);
   this.makeRequest(url, function(){
     if(this.status !== 200) return;
    var jsonString = this.responseText; 
@@ -23,6 +22,7 @@ makePostRequest: function(url, data, callback){
   request.open("POST", url);
   request.setRequestHeader("Content-type", "application/json");
   request.onload = callback;
+  console.log(data);
   request.send(data);
 },
 

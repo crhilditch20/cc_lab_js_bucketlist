@@ -63,59 +63,78 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 244);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 134:
+/******/ ([
+/* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Countries = __webpack_require__(135);
+var Countries = __webpack_require__(1);
 var selectedCountry;
 
 var UI = function(){
   this.countries = new Countries();
 
-  this.getSelectedCountry();
+  var addButton = document.querySelector('#add-my-country');
+  addButton.onclick = this.getSelectedCountry.bind(this); 
 
-  // var addButton = document.querySelector('#add-my-country');
-  // addButton.onclick = addSelectedCountry;
+  this.getBucketListFromDb();
 };
 
 UI.prototype = {
 
   getSelectedCountry: function(){
-    var countryList = document.querySelector('#country-list');
-    console.log(countryList);
-    var self = this;
-    countryList.onchange = function(event){
-      console.log(this);
-      selectedCountry = {
-        name: this.value //this is undefined...
-      }
-      console.log(selectedCountry);
+    var selected = document.querySelector('#country-list');
+      selectedCountry = {name: selected.value};
       var jsonString = JSON.stringify(selectedCountry);
-
-      self.countries.makePostRequest("/", jsonString, function(){
+      this.countries.makePostRequest('/api/bucketlist', jsonString, function(){
         console.log(this.responseText);
-      })
-    };
+      });
+  },
+
+  getBucketListFromDb: function(){
+    var self = this;
+    var blist_url = '/api/bucketlist';
+    this.countries.makeRequest(blist_url, function(){
+    if(this.status !== 200) return;
+   var jsonString = this.responseText; 
+    bucketList = JSON.parse(jsonString);
+      console.log(this);
+    self.displayBucketList(bucketList);
+  });
+  },
+
+  displayBucketList: function(bucketlist){
+    var div = document.querySelector('#my-bucket-list');
+      var list = document.createElement('ul');
+      div.appendChild(list);
+      bucketlist.forEach(function(country){
+        var checkbox = document.createElement('input');
+          checkbox.setAttribute('type', 'checkbox');
+          checkbox.setAttribute('name', 'country');
+        var label = document.createElement('label');
+          label.setAttribute('for', 'country');
+          label.innerHTML = country.name;
+      label.appendChild(checkbox);
+      list.appendChild(label);
+    });
   }
 
- }
+
+}
+
+ 
 
 module.exports = UI;
 
 /***/ }),
-
-/***/ 135:
+/* 1 */
 /***/ (function(module, exports) {
 
 var Countries = function(){
   var url = 'https://restcountries.eu/rest/v1/all';
   var self = this;
-  console.log(this);
   this.makeRequest(url, function(){
     if(this.status !== 200) return;
    var jsonString = this.responseText; 
@@ -137,6 +156,7 @@ makePostRequest: function(url, data, callback){
   request.open("POST", url);
   request.setRequestHeader("Content-type", "application/json");
   request.onload = callback;
+  console.log(data);
   request.send(data);
 },
 
@@ -155,11 +175,10 @@ populateList: function(countries){
 module.exports = Countries;
 
 /***/ }),
-
-/***/ 244:
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var UI = __webpack_require__(134);
+var UI = __webpack_require__(0);
 
 var app = function() {
   new UI();
@@ -169,6 +188,5 @@ window.onload = app;
 
 
 /***/ })
-
-/******/ });
+/******/ ]);
 //# sourceMappingURL=bundle.js.map

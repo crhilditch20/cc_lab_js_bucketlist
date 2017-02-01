@@ -21,7 +21,7 @@ countryRouter.post('/', function(req, res){
   query.add(data);
   query.all(function(results){
     res.json(results);
-  })
-})
+  });
+});
 
 module.exports = countryRouter;
